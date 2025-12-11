@@ -1,62 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser } from '../features/auth/authSlice';
-import { useNavigate } from 'react-router-dom';
+import { loginUser } from "../features/auth/authSlice";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { loading, error, user } = useSelector((state) => state.auth);
+  const { loading, error } = useSelector((s) => s.auth);
 
   const [form, setForm] = useState({
-    username: "",
-    password: ""
+    username: "kminchelle",
+    password: "0lelplR",
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(loginUser(form))
-      .unwrap()
-      .then(() => {
-        // optionally navigate on success
-        navigate('/products');
-      })
-      .catch(() => {
-        // error is handled in slice; nothing extra needed here
-      });
+    dispatch(loginUser(form)).then((res) => {
+      if (res.meta.requestStatus === "fulfilled") navigate("/products");
+    });
   };
 
   return (
     <div>
-      <h1>Login</h1>
+      <h2>Login</h2>
 
       <form onSubmit={handleSubmit}>
         <input
-          type='text'
-          placeholder='username'
+          placeholder="Username"
           value={form.username}
           onChange={(e) => setForm({ ...form, username: e.target.value })}
         />
+        <br /><br />
 
         <input
-          type='password'
-          placeholder='password'
+          type="password"
+          placeholder="Password"
           value={form.password}
           onChange={(e) => setForm({ ...form, password: e.target.value })}
         />
+        <br /><br />
 
-        <button type='submit' disabled={loading}>
-          {loading ? "loading..." : "Login"}
-        </button>
-
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        <button type="submit">{loading ? "Loading..." : "Login"}</button>
       </form>
 
-      {user && (
-        <div style={{ marginTop: 12 }}>
-          <strong>Signed in as:</strong> {user.username || user.firstName || 'User'}
-        </div>
-      )}
+      {error && <p style={{ color: "red" }}>{error}</p>}
+
+      <p>Don't have an account? <a href="/register">Register</a></p>
     </div>
   );
 };
